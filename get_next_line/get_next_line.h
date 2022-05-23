@@ -3,25 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kamanfo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kamanfo <kamanfo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 20:55:10 by kamanfo           #+#    #+#             */
-/*   Updated: 2021/12/02 13:57:11 by kamanfo          ###   ########.fr       */
+/*   Updated: 2021/12/20 14:57:07 by kamanfo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef  GET_NEXT_LINE_H
+#ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# include <stdlib.h>
-# include <unistd.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 # include <fcntl.h>
-# include "../libft/libft.h"
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
 
-int		has_backtoline(char *str);
-char	*ft_gnlstrjoin(char *s1, char *s2);
-char	*get_save(char *str);
-char	*get_line(char *str);
+char	*ft_strchr(const char *s, int c);
 char	*get_next_line(int fd);
+char	*ft_gnljoin(char *s1, char *s2);
+char	*maj_txt(char *actual, char *to_free);
 
 #endif

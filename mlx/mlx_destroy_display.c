@@ -1,25 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   mlx_destroy_display.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kamanfo <kamanfo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mg <mg@student.42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/11/22 14:57:50 by kamanfo           #+#    #+#             */
-/*   Updated: 2022/01/01 18:31:38 by kamanfo          ###   ########.fr       */
+/*   Created: 2020/10/03 18:56:35 by mg                #+#    #+#             */
+/*   Updated: 2020/10/04 01:55:35 by mg               ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "mlx_int.h"
 
-size_t	ft_strlen(const char *s)
+int	mlx_destroy_display(t_xvar *xvar)
 {
-	int	len;
-
-	len = 0;
-	if (!s)
-		return (0);
-	while (s[len])
-		len++;
-	return (len);
+	XCloseDisplay(xvar->display);
 }

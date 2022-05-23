@@ -3,90 +3,92 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kamanfo <marvin@42.fr>                     +#+  +:+       +#+        */
+/*   By: kamanfo <kamanfo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/01 20:36:01 by kamanfo           #+#    #+#             */
-/*   Updated: 2021/12/18 18:34:37 by kamanfo          ###   ########.fr       */
+/*   Updated: 2022/01/01 17:34:36 by kamanfo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include "../libft/libft.h"
 
-char	*get_line(char *str)
+char	*get_next_txt(char *buffer_txt, int fd)
 {
-	char	*line;
-	int		i;
+	int		read_vl;
+	char	*line_buffer;
 
-	i = 0;
-	if (!str)
-		return (0);
-	if (!(*str))
-		return (free(str), NULL);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (str[i] == '\n')
-		++i;
-	line = (char *)malloc(sizeof(char) * (i + 1));
-	if (!line)
-		return (0);
-	i = -1;
-	while (str[++i] && str[i] != '\n')
-		line[i] = str[i];
-	line[i] = str[i];
-	if (str[i] == '\n')
-		line[++i] = '\0';
-	return (line);
+	read_vl = 0;
+	line_buffer = malloc(sizeof(char) * (4096 + 1));
+	if (!line_buffer)
+		return (NULL);
+	while (ft_strchr(buffer_txt, 10) == NULL)
+	{	
+		read_vl = read(fd, line_buffer, 4096);
+		if (read_vl == -1)
+		{
+			free(line_buffer);
+			return (NULL);
+		}
+		else if (read_vl == 0)
+		{
+			free(line_buffer);
+			return (buffer_txt);
+		}
+		*(line_buffer + read_vl) = 0;
+		buffer_txt = ft_gnljoin(buffer_txt, line_buffer);
+	}
+	free(line_buffer);
+	return (buffer_txt);
 }
 
-char	*get_save(char *str)
+char	*get_extract_line(char *gt_txt)
 {
-	char	*save;
-	int		i;
-	int		j;
+	char		*new_line;
+	size_t		index;
 
-	i = 0;
-	j = 0;
-	if (!str || !str[0])
-		return (0);
-	while (str[i] && str[i] != '\n')
-		i++;
-	if (!str[i])
-		return (free(str), NULL);
-	save = (char *)malloc(ft_strlen(&str[i]));
-	if (!save)
-		return (0);
-	i++;
-	while (str[i])
-		save[j++] = str[i++];
-	save[j] = '\0';
-	free(str);
-	return (save);
+	if (!gt_txt)
+		return (NULL);
+	index = 0;
+	while (*(gt_txt + index) && (*(gt_txt + index) != '\n'))
+		index++;
+	new_line = malloc(sizeof(char) * (index + 2));
+	if (!new_line)
+		return (NULL);
+	index = 0;
+	while (*(gt_txt + index) && (*(gt_txt + index) != '\n'))
+	{
+		*(new_line + index) = *(gt_txt + index);
+		index++;
+	}
+	if (*(gt_txt + index) == 10)
+	{
+		*(new_line + index) = *(gt_txt + index);
+		index++;
+	}
+	*(new_line + index) = 0;
+	return (new_line);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buff;
-	char		*line;
-	static char	*save = NULL;
-	int			reader;
+	static char		*buffer_txt;
+	char			*line;
 
-	line = NULL;
-	reader = 1;
-	if (fd < 0)
+	if (fd < 0 || fd > 65535)
 		return (NULL);
-	buff = (char *)malloc((4096 + 1) * sizeof(char));
-	if (!buff)
-		return (NULL);
-	while (!has_backtoline(save) && reader != 0)
+	else if (ft_strchr(buffer_txt, 10) == NULL)
+		buffer_txt = get_next_txt(buffer_txt, fd);
+	line = get_extract_line(buffer_txt);
+	if (line)
 	{
-		reader = read(fd, buff, 4096);
-		if (reader == -1)
-			return (free(buff), NULL);
-		buff[reader] = '\0';
-		save = ft_gnlstrjoin(save, buff);
+		if (ft_strlen(buffer_txt) == 0)
+		{
+			free(line);
+			free(buffer_txt);
+			return (NULL);
+		}
+		buffer_txt = maj_txt(buffer_txt + ft_strlen(line), buffer_txt);
 	}
-	free(buff);
-	line = get_line(save);
-	save = get_save(save);
 	return (line);
 }
